@@ -357,7 +357,8 @@ static NSString *_localizedSelectTitle = @"Select";
     
     //Setup properties of elements
     self.titleLabel.backgroundColor = [UIColor clearColor];
-    self.titleLabel.textColor = [UIColor grayColor];
+    self.titleLabel.textColor = [UIColor blackColor];   // iPhone
+    self.titleLabel.tintColor = [UIColor blackColor];   // iPad
     self.titleLabel.font = [UIFont systemFontOfSize:14];
     self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -736,8 +737,8 @@ static NSString *_localizedSelectTitle = @"Select";
         if(!self.disableBlurEffects) {
             self.datePicker.tintColor = newTintColor;
         }
-
-        self.titleLabel.tintColor = newTintColor;
+//        self.titleLabel.textColor = newTintColor;   // iPhone
+//        self.titleLabel.tintColor = newTintColor;   // iPad
         self.nowButton.tintColor = newTintColor;
         self.cancelButton.tintColor = newTintColor;
         self.selectButton.tintColor = newTintColor;
