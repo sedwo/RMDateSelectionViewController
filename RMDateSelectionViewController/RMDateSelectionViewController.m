@@ -358,10 +358,10 @@ static NSString *_localizedSelectTitle = @"Select";
     //Setup properties of elements
     self.titleLabel.backgroundColor = [UIColor clearColor];
     self.titleLabel.textColor = [UIColor grayColor];
-    self.titleLabel.font = [UIFont systemFontOfSize:12];
+    self.titleLabel.font = [UIFont systemFontOfSize:14];
     self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
-    self.titleLabel.numberOfLines = 0;
+    self.titleLabel.numberOfLines = 1;
     
     [self.nowButton setTitle:[RMDateSelectionViewController localizedTitleForNowButton] forState:UIControlStateNormal];
     [self.nowButton addTarget:self action:@selector(nowButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -736,7 +736,8 @@ static NSString *_localizedSelectTitle = @"Select";
         if(!self.disableBlurEffects) {
             self.datePicker.tintColor = newTintColor;
         }
-        
+
+        self.titleLabel.tintColor = newTintColor;
         self.nowButton.tintColor = newTintColor;
         self.cancelButton.tintColor = newTintColor;
         self.selectButton.tintColor = newTintColor;
