@@ -24,6 +24,9 @@
 //  THE SOFTWARE.
 //
 
+#import "RMDateSelectionViewController.h"
+#import <QuartzCore/QuartzCore.h>
+
 @interface NSDate (Rounding)
 
 - (NSDate *)dateByRoundingToMinutes:(NSInteger)minutes;
@@ -58,6 +61,8 @@
 @interface RMNonRotatingDateSelectionViewController : UIViewController
 
 @property (nonatomic, assign) UIInterfaceOrientation mutableInterfaceOrientation;
+@property (nonatomic, assign, readwrite) UIStatusBarStyle preferredStatusBarStyle;
+@property (nonatomic, assign) RMDateSelectionViewControllerStatusBarHiddenMode statusBarHiddenMode;
 
 @end
 
@@ -133,23 +138,26 @@
 
 #pragma mark - Status Bar
 - (BOOL)prefersStatusBarHidden {
-    if([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0 && [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        if(UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation))
-            return YES;
-        
+    if(self.statusBarHiddenMode == RMDateSelectionViewControllerStatusBarHiddenModeNever) {
         return NO;
+    } else if(self.statusBarHiddenMode == RMDateSelectionViewControllerStatusBarHiddenModeAlways) {
+        return YES;
+    } else {
+        if([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0 && [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            if(UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation))
+                return YES;
+            
+            return NO;
+        } else {
+            return NO;
+        }
     }
-    
-    return [super prefersStatusBarHidden];
 }
 
 @end
 
 #define RM_DATE_PICKER_HEIGHT_PORTRAIT 216
 #define RM_DATE_PICKER_HEIGHT_LANDSCAPE 162
-
-#import "RMDateSelectionViewController.h"
-#import <QuartzCore/QuartzCore.h>
 
 typedef enum {
     RMDateSelectionViewControllerPresentationTypeWindow,
@@ -717,7 +725,11 @@ static NSString *_localizedSelectTitle = @"Select";
     if(!_window) {
         self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         _window.windowLevel = UIWindowLevelStatusBar;
-        _window.rootViewController = [[RMNonRotatingDateSelectionViewController alloc] init];
+        
+        RMNonRotatingDateSelectionViewController *rootViewController = [[RMNonRotatingDateSelectionViewController alloc] init];
+        rootViewController.preferredStatusBarStyle = self.preferredStatusBarStyle;
+        rootViewController.statusBarHiddenMode = self.statusBarHiddenMode;
+        _window.rootViewController = rootViewController;
     }
     
     return _window;
@@ -895,7 +907,10 @@ static NSString *_localizedSelectTitle = @"Select";
     if(!self.hasBeenDismissed) {
         self.hasBeenDismissed = YES;
         
-        [self.delegate dateSelectionViewControllerDidCancel:self];
+        if ([self.delegate respondsToSelector:@selector(dateSelectionViewControllerDidCancel:)]) {
+          [self.delegate dateSelectionViewControllerDidCancel:self];
+        }
+      
         if (self.cancelBlock) {
             self.cancelBlock(self);
         }
@@ -914,8 +929,11 @@ static NSString *_localizedSelectTitle = @"Select";
 - (IBAction)backgroundViewTapped:(UIGestureRecognizer *)sender {
     if(!self.backgroundTapsDisabled && !self.hasBeenDismissed) {
         self.hasBeenDismissed = YES;
-        
-        [self.delegate dateSelectionViewControllerDidCancel:self];
+      
+        if ([self.delegate respondsToSelector:@selector(dateSelectionViewControllerDidCancel:)]) {
+            [self.delegate dateSelectionViewControllerDidCancel:self];
+        }
+      
         if (self.cancelBlock) {
             self.cancelBlock(self);
         }
@@ -928,7 +946,9 @@ static NSString *_localizedSelectTitle = @"Select";
     if(!self.hasBeenDismissed) {
         self.hasBeenDismissed = YES;
         
-        [self.delegate dateSelectionViewControllerDidCancel:self];
+        if ([self.delegate respondsToSelector:@selector(dateSelectionViewControllerDidCancel:)]) {
+          [self.delegate dateSelectionViewControllerDidCancel:self];
+        }
         if (self.cancelBlock) {
             self.cancelBlock(self);
         }

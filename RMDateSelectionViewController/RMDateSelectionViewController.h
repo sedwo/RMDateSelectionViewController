@@ -26,6 +26,15 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, RMDateSelectionViewControllerStatusBarHiddenMode) {
+    /** On iOS 7, the status bar is not hidden in any orientation. On iOS 8, the status is not hidden in portrait mode and hidden in landscape mode. */
+    RMDateSelectionViewControllerStatusBarHiddenModeDefault,
+    /** The status bar is always hidden, regardless of orientation and iOS version. */
+    RMDateSelectionViewControllerStatusBarHiddenModeAlways,
+    /** The status bar is never hidden, regardless of orientation and iOS version. */
+    RMDateSelectionViewControllerStatusBarHiddenModeNever
+};
+
 @class RMDateSelectionViewController;
 
 /**
@@ -58,14 +67,16 @@ typedef void (^RMDateCancelBlock)(RMDateSelectionViewController *vc);
  */
 - (void)dateSelectionViewController:(RMDateSelectionViewController *)vc didSelectDate:(NSDate *)aDate;
 
+@optional
+
 /**
  This method is called when the user selects the cancel button or taps the darkened background (if the property [backgroundTapsDisabled]([RMDateSelectionViewController backgroundTapsDisabled]) of RMDateSelectionViewController returns NO).
  
+ @discussion Implementation of this method is optional. When the cancel button is pressed, the date selection view controller will be dismissed. This method can be implemented to do anything additional to the dismissal.
+
  @param vc  The date selection view controller that just canceled.
  */
 - (void)dateSelectionViewControllerDidCancel:(RMDateSelectionViewController *)vc;
-
-@optional
 
 /// @name Additional Buttons
 
@@ -161,6 +172,16 @@ typedef void (^RMDateCancelBlock)(RMDateSelectionViewController *vc);
 @property (assign, nonatomic) BOOL backgroundTapsDisabled;
 
 /// @name Appearance
+
+/**
+ *  Used to set the preferred status bar style.
+ */
+@property (nonatomic, assign, readwrite) UIStatusBarStyle preferredStatusBarStyle;
+
+/**
+ *  Used to hide the status bar.
+ */
+@property (nonatomic, assign) RMDateSelectionViewControllerStatusBarHiddenMode statusBarHiddenMode;
 
 /**
  *  Used to set the text color of the buttons but not the date picker.
